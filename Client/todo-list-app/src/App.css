@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  background: url('https://images.unsplash.com/photo-1507919909716-c8262e491cde?auto=format&fit=crop&q=80&w=1632&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
 }
 
 .App-logo {
@@ -15,17 +16,17 @@
 
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
+  min-height: 70vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: lightblue;
 }
 
 .App-link {
-  color: #61dafb;
+  color: #000507;
 }
 
 @keyframes App-logo-spin {
@@ -36,3 +37,49 @@
     transform: rotate(360deg);
   }
 }
+
+.fancy-button1 {
+  background-color: #2a84e6; 
+  color: #fff; 
+  border: none; 
+  padding: 10px 20px; 
+  border-radius: 5px; 
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px; 
+  cursor: pointer;
+  transition: background-color 0.3s; 
+  margin-right: 10px; 
+  width: 120px;
+  height: 40px;
+  line-height: 20px;
+}
+
+
+.fancy-button1:hover {
+  background-color: #0056b3; 
+}
+
+.fancy-button2 {
+  background-color: #2a84e6; 
+  color: #fff; 
+  border: none; 
+  padding: 10px 20px; 
+  border-radius: 5px; 
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px; 
+  cursor: pointer;
+  transition: background-color 0.3s; 
+  margin-right: -70px; 
+  width: 120px;
+  height: 40px;
+  line-height: 20px;
+}
+
+.fancy-button2:hover {
+  background-color: #0056b3; 
+}
+
