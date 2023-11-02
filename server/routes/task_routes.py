@@ -1,7 +1,6 @@
-from models.task import Task
+from ..models.task import Task
 from flask import request, jsonify
-from server.app import app, db
-from server.models.task import Task
+from ..routes.app import app, db
 
 @app.route('/api/tasks', methods=['POST'])
 def create_task():

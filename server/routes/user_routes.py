@@ -1,8 +1,8 @@
 from flask import request, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import login_user, logout_user
-from server.app import app, db
-from server.models.user import User
+from flask_login import LoginManager, login_user, logout_user
+from .app import app, db
+from ..models.user import User
 
 @app.route('/api/register', methods=['POST'])
 def register():

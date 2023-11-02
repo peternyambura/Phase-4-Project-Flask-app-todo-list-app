@@ -1,6 +1,9 @@
 from flask import request, jsonify
-from server.app import app, db
-from server.models.category import Category
+from server.models.task import Task
+from .app import app, db
+from server.routes.app import app, db
+from ..models.category import Category
+
 
 @app.route('/api/categories', methods=['POST'])
 def create_category():

@@ -1,4 +1,4 @@
-from server import db
+from server.routes.app import db
 
 task_categories = db.Table('task_categories',
     db.Column('task_id', db.Integer, db.ForeignKey('task.id'), primary_key=True),
