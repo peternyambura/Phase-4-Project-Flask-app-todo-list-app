@@ -1,0 +1,50 @@
+  .form_trial {
+    background: url('https://images.unsplash.com/photo-1507919909716-c8262e491cde?auto=format&fit=crop&q=80&w=1632&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+    background-size: cover;
+  }
+  html, body {
+    background: url('https://images.unsplash.com/photo-1507919909716-c8262e491cde?auto=format&fit=crop&q=80&w=1632&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+    background-size: cover;
+  }
+  .editme {
+    width: 420px;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 2);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 2);
+    color: #fff;
+    border-radius: 10px;
+    padding: 30px 40px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    
+  }
+
+  .form-group {
+    margin: 10px 0;
+    text-align: left;
+  }
+  .jaribu {
+    
+  }
+  .n-primary {
+    background-color: #2a84e6; 
+    color: #fff; 
+    border: none; 
+    padding: 10px 20px; 
+    border-radius: 5px; 
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px; 
+    cursor: pointer;
+    transition: background-color 0.3s; 
+    margin-right: 10px; 
+    width: 120px;
+    height: 40px;
+    line-height: 20px;
+  }
+  
