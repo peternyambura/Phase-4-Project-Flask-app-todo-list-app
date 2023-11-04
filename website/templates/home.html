@@ -1,5 +1,6 @@
-{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
-%}
+{% extends "base.html" %} 
+{% block title %}Home{% endblock %} 
+{% block content %}
 <head>
 </head>
 <div class="jaribuu">
@@ -8,6 +9,11 @@
     {% for note in user.notes %}
     <li class="list-group-item">
       {{ note.data }}
+      <span class="badge badge-secondary">{{ note.status }}</span>
+      <span class="badge badge-info">Priority: {{ note.priority }}</span>
+      {% if note.category %}
+      <span class="badge badge-primary">{{ note.category.name }}</span>
+      {% endif %}
       <button type="button" class="close" onClick="deleteNote({{ note.id }})">
         <span aria-hidden="true">&times;</span>
       </button>
@@ -19,7 +25,20 @@
   <form method="POST">
     <textarea name="note" id="note" class="form-control"></textarea>
     <br />
+    <!-- Adding fields for status, priority, and category -->
     <div align="center">
+      <select name="status">
+        <option value="pending">Pending</option>
+        <option value="ongoing">Ongoing</option>
+        <option value="completed">Completed</option>
+      </select>
+      <input type="number" name="priority" min="1" max="5" placeholder="Priority (1-5)">
+      <select name="category_id">
+        {% for category in user.categories %}
+        <option value="{{ category.id }}">{{ category.name }}</option>
+        {% endfor %}
+      </select>
+      <input type="text" name="new_category" placeholder="Or type a new category">
       <button type="submit" class="btn btn-primary">Add Note</button>
     </div>
   </form>

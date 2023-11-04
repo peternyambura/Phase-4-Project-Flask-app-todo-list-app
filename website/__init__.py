@@ -1,11 +1,12 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from os import path
 from flask_login import LoginManager
+from flask_migrate import Migrate
+from os import path
+
 
 db = SQLAlchemy()
-DB_NAME = "database.db"
-
+migrate = Migrate()
 
 def create_app():
     app = Flask(__name__)
@@ -14,6 +15,7 @@ def create_app():
     app.config["DEBUG"] = True
 
     db.init_app(app)
+    migrate.init_app(app, db)  
 
     from .views import views
     from .auth import auth
@@ -36,6 +38,7 @@ def create_app():
 
     return app
 
+DB_NAME = "database.db"
 
 def create_database(app):
     if not path.exists('website/' + DB_NAME):
