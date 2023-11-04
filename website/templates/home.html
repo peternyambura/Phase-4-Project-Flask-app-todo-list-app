@@ -4,7 +4,7 @@
 <head>
 </head>
 <div class="jaribuu">
-  <h1 align="center">A screen for your thoughts :)</h1>
+  <h1 align="center">My Tasks</h1>
   <ul class="list-group list-group-flush" id="notes">
     {% for note in user.notes %}
     <li class="list-group-item">
@@ -25,7 +25,6 @@
   <form method="POST">
     <textarea name="note" id="note" class="form-control"></textarea>
     <br />
-    <!-- Adding fields for status, priority, and category -->
     <div align="center">
       <select name="status">
         <option value="pending">Pending</option>
@@ -39,7 +38,7 @@
         {% endfor %}
       </select>
       <input type="text" name="new_category" placeholder="Or type a new category">
-      <button type="submit" class="btn btn-primary">Add Note</button>
+      <button type="submit" class="btn btn-primary">Add Task</button>
     </div>
   </form>
 </div>

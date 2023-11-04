@@ -41,3 +41,28 @@ def delete_note():
             db.session.commit()
             return jsonify({})
     return jsonify({}), 400
+
+
+@views.route('/edit-note/<int:note_id>', methods=['POST'])
+@login_required
+def edit_note(note_id):
+    note = Note.query.get_or_404(note_id)
+    if note.user_id != current_user.id:
+        abort(403)
+    data = request.get_json()
+    note.status = data['status']
+    note.priority = data['priority']
+    note.is_archived = data['is_archived']
+    db.session.commit()
+    return jsonify({'message': 'Note updated'}), 200
+
+@views.route('/archive-note/<int:note_id>', methods=['POST'])
+@login_required
+def archive_note(note_id):
+    note = Note.query.get_or_404(note_id)
+    if note.user_id != current_user.id:
+        abort(403)
+    note.is_archived = True
+    db.session.commit()
+    return jsonify({'message': 'Note archived'}), 200
+

@@ -15,7 +15,8 @@ class Note(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=True)
     status = db.Column(db.String(50), nullable=False, default='pending')
-    priority = db.Column(db.Integer, nullable=False, default=3)  
+    priority = db.Column(db.Integer, nullable=False, default=3)
+    is_archived = db.Column(db.Boolean, default=False)
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
