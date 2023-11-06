@@ -1,27 +1,252 @@
-{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
-%}
+{% extends "base.html" %} 
+{% block title %}Home{% endblock %} 
+{% block content %}
 <head>
+  <!-- Include any additional CSS or JS here -->
 </head>
-<div class="jaribuu">
-  <h1 align="center">A screen for your thoughts :)</h1>
-  <ul class="list-group list-group-flush" id="notes">
-    {% for note in user.notes %}
-    <li class="list-group-item">
-      {{ note.data }}
-      <button type="button" class="close" onClick="deleteNote({{ note.id }})">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </li>
-    {% endfor %}
-  </ul>
+<div class="ui pointing menu">
+  <!-- Vertical menu for task statuses -->
+  <a class="item" onclick="filterTasks('all')">All Tasks</a>
+  <a class="item" onclick="filterTasks('pending')">Pending</a>
+  <a class="item" onclick="filterTasks('ongoing')">Ongoing</a>
+  <a class="item" onclick="filterTasks('completed')">Completed</a>
+  <!-- Categories will be dynamically loaded here -->
+  {% for category in user.categories %}
+  <a class="item" onclick="filterTasksByCategory('{{ category.id }}')">{{ category.name }}</a>
+  {% endfor %}
+  <div class="right menu">
+    <div class="item">
+      <div class="ui transparent icon input">
+        <input type="text" placeholder="Search...">
+        <i class="search link icon"></i>
+      </div>
+    </div>
+  </div>
 </div>
+
+<!-- Main content area where tasks will be displayed -->
+<div class="ui segment" style="display: flex;">
+  <div class="ui vertical fluid tabular menu">
+    <!-- This is where the task status tabs will be -->
+  </div>
+  <div class="ui bottom attached segment active tab" id="task-content">
+    <!-- Tasks will be dynamically inserted here -->
+    <ul class="list-group list-group-flush" id="notes">
+      <!-- Dynamically load tasks here -->
+      {% for note in user.notes %}
+      <li class="list-group-item">
+        {{ note.data }}
+        <span class="badge badge-secondary">{{ note.status }}</span>
+        <span class="badge badge-info">Priority: {{ note.priority }}</span>
+        {% if note.category %}
+        <span class="badge badge-primary">{{ note.category.name }}</span>
+        {% endif %}
+              <!-- Add buttons for editing, archiving, and deleting tasks -->
+        <button type="button" onclick="editTask({{ note.id }})">Edit</button>
+        <button type="button" onclick="changeStatus({{ note.id }}, '{{ note.status }}')">Change Status</button>
+        <button type="button" class="btn btn-danger" onclick="deleteTask({{ note.id }})">Delete</button>
+      </li>
+      {% endfor %}
+      </ul>
+  </div>
+</div>
+
+
 <div class="jaribu">
   <form method="POST">
     <textarea name="note" id="note" class="form-control"></textarea>
     <br />
     <div align="center">
-      <button type="submit" class="btn btn-primary">Add Note</button>
+      <select name="status">
+        <option value="pending">Pending</option>
+        <option value="ongoing">Ongoing</option>
+        <option value="completed">Completed</option>
+      </select>
+
+      <!-- Updated priority input -->
+      <select name="priority" id="priority-select">
+        <option value="1">High</option>
+        <option value="2">Medium</option>
+        <option value="3">Low</option>
+      </select>
+
+      <select name="category_id">
+        {% for category in user.categories %}
+        <option value="{{ category.id }}">{{ category.name }}</option>
+        {% endfor %}
+      </select>
+      <input type="text" name="new_category" placeholder="Or type a new category">
+      <button type="submit" class="btn btn-primary">Add Task</button>
     </div>
   </form>
 </div>
-{% endblock %}
+
+<script>
+  // JavaScript functions to filter tasks by status or category
+  function filterTasks(status) {
+    fetch(`/filter-tasks/${status}`)
+      .then(response => response.json())
+      .then(data => {
+        // Assuming 'data' is an array of tasks
+        const notesList = document.getElementById('notes');
+        notesList.innerHTML = ''; // Clear current tasks
+        data.forEach(note => {
+          notesList.innerHTML += `
+            <li class="list-group-item">
+              ${note.data}
+              <span class="badge badge-secondary">${note.status}</span>
+              <span class="badge badge-info">Priority: ${note.priority}</span>
+              <button type="button" onclick="editTask(${note.id})">Edit</button>
+              <button type="button" onclick="archiveTask(${note.id})">Archive</button>
+            </li>
+          `;
+        });
+      })
+      .catch(error => console.error('Error:', error));
+  }
+  
+  function filterTasksByCategory(categoryId) {
+    fetch(`/filter-tasks-by-category/${categoryId}`)
+      .then(response => response.json())
+      .then(data => {
+        // Similar to filterTasks, but filtering by category
+        const notesList = document.getElementById('notes');
+        notesList.innerHTML = ''; // Clear current tasks
+        data.forEach(note => {
+          notesList.innerHTML += `
+            <li class="list-group-item">
+              ${note.data}
+              <span class="badge badge-primary">${note.category.name}</span>
+              <button type="button" onclick="editTask(${note.id})">Edit</button>
+              <button type="button" onclick="archiveTask(${note.id})">Archive</button>
+            </li>
+          `;
+        });
+      })
+      .catch(error => console.error('Error:', error));
+  }
+  
+  function editTask(noteId) {
+    // This function would typically open a modal or form to edit the task
+    // For simplicity, let's assume you're just toggling the task status
+    const newStatus = prompt("Enter new status (pending/ongoing/completed):");
+    const newPriority = prompt("Enter new priority (1-5):");
+  
+    fetch(`/edit-note/${noteId}`, {
+      method: 'POST',
+      body: JSON.stringify({
+        status: newStatus,
+        priority: newPriority
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      // Update the UI to reflect the changes
+      alert(data.message);
+      location.reload(); // Simple way to refresh the tasks
+    })
+    .catch(error => console.error('Error:', error));
+  }
+  
+  function archiveTask(noteId) {
+    if (!confirm("Are you sure you want to archive this task?")) return;
+  
+    fetch(`/archive-note/${noteId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      // Update the UI to reflect the task has been archived
+      alert(data.message);
+      location.reload(); // Simple way to refresh the tasks
+    })
+    .catch(error => console.error('Error:', error));
+  }
+
+  function deleteTask(noteId) {
+  if (!confirm("Are you sure you want to delete this task?")) return;
+
+  fetch(`/delete-note`, {
+    method: 'POST',
+    body: JSON.stringify({ noteId: noteId }),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(response => {
+    if (!response.ok) throw new Error('Network response was not ok');
+    return response.json();
+  })
+  .then(data => {
+    // Update the UI to reflect the task has been deleted
+    alert('Task deleted');
+    location.reload(); // Simple way to refresh the tasks
+  })
+  .catch(error => console.error('Error:', error));
+}
+
+function changePriority(taskId) {
+  var selectElement = document.getElementById('priority-select');
+  var priority = selectElement.value; // This will be '1', '2', or '3'
+
+  // Code to send this data to your server
+  fetch(`/update-priority/${taskId}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ priority: priority }),
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  })
+  .then(data => {
+    // Handle the response data
+    console.log('Priority updated:', data);
+  })
+  .catch(error => {
+    console.error('Error updating priority:', error);
+  });
+}
+
+function changeStatus(noteId, currentStatus) {
+  // Define the next status based on current status
+  const statuses = ['pending', 'ongoing', 'completed'];
+  let currentIndex = statuses.indexOf(currentStatus);
+  let nextIndex = (currentIndex + 1) % statuses.length;
+  let newStatus = statuses[nextIndex];
+
+  fetch(`/change-status/${noteId}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ status: newStatus }),
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  })
+  .then(data => {
+    // Handle the response data
+    console.log('Status updated:', data);
+    location.reload(); // Simple way to refresh the tasks
+  })
+  .catch(error => {
+    console.error('Error updating status:', error);
+  });
+}
+
+
+  </script>{% endblock %}
