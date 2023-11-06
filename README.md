@@ -2,6 +2,10 @@
 
 This is a simple to-do list application built with Flask for the backend and potentially React for the frontend.
 
+## Documentation
+
+For detailed documentation of the project, including design decisions, API endpoints, and more, please refer to the [Project Documentation](https://docs.google.com/document/d/18yjRPsEIBqfDOtu-GrZsH2LihlhtdfKJ6JHm9gCGmDA/edit?usp=sharing).
+
 ## Getting Started
 
 These instructions will guide you through getting a copy of the project up and running on your local machine for development and testing purposes.
