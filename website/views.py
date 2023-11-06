@@ -30,17 +30,26 @@ def home():
 
     return render_template("home.html", user=current_user)
 
+from flask import abort
+
+# ...
+
 @views.route('/delete-note', methods=['POST'])
+@login_required
 def delete_note():
-    note = json.loads(request.data)
-    noteId = note['noteId']
-    note = Note.query.get(noteId)
-    if note:
-        if note.user_id == current_user.id:
+    try:
+        note = json.loads(request.data)
+        noteId = note.get('noteId')
+        note = Note.query.get(noteId)
+        if note and note.user_id == current_user.id:
             db.session.delete(note)
             db.session.commit()
-            return jsonify({})
-    return jsonify({}), 400
+            return jsonify({}), 200
+        else:
+            return jsonify({'error': 'Note not found or user unauthorized'}), 404
+    except Exception as e:
+        print(f'Error deleting note: {e}')
+        abort(500) 
 
 
 @views.route('/edit-note/<int:note_id>', methods=['POST'])
@@ -66,3 +75,43 @@ def archive_note(note_id):
     db.session.commit()
     return jsonify({'message': 'Note archived'}), 200
 
+@views.route('/filter-tasks/<status>', methods=['GET'])
+@login_required
+def filter_tasks(status):
+    if status == "all":
+        tasks = Note.query.filter_by(user_id=current_user.id).all()
+    else:
+        tasks = Note.query.filter_by(user_id=current_user.id, status=status).all()
+    
+    # Convert tasks to JSON-serializable format
+    tasks_data = [{'id': task.id, 'data': task.data, 'status': task.status, 'priority': task.priority, 'category': {'name': task.category.name if task.category else None}} for task in tasks]
+    return jsonify(tasks_data)
+
+@views.route('/update-priority/<int:task_id>', methods=['POST'])
+@login_required
+def update_priority(task_id):
+    data = request.json
+    priority = data['priority']
+    task = Note.query.get(task_id)
+    
+    if task and task.user_id == current_user.id:
+        task.priority = priority
+        db.session.commit()
+        return jsonify({'message': 'Priority updated successfully'}), 200
+    else:
+        return jsonify({'error': 'Task not found or unauthorized'}), 404
+    
+@views.route('/change-status/<int:note_id>', methods=['POST'])
+@login_required
+def change_status(note_id):
+    note = Note.query.get_or_404(note_id)
+    if note.user_id != current_user.id:
+        abort(403)
+    
+    data = request.get_json()
+    new_status = data['status']
+    
+    note.status = new_status
+    db.session.commit()
+    
+    return jsonify({'message': 'Status updated successfully'}), 200

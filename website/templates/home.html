@@ -41,12 +41,13 @@
         {% if note.category %}
         <span class="badge badge-primary">{{ note.category.name }}</span>
         {% endif %}
-        <!-- Add buttons for editing and archiving tasks -->
+              <!-- Add buttons for editing, archiving, and deleting tasks -->
         <button type="button" onclick="editTask({{ note.id }})">Edit</button>
-        <button type="button" onclick="archiveTask({{ note.id }})">Archive</button>
+        <button type="button" onclick="changeStatus({{ note.id }}, '{{ note.status }}')">Change Status</button>
+        <button type="button" class="btn btn-danger" onclick="deleteTask({{ note.id }})">Delete</button>
       </li>
       {% endfor %}
-    </ul>
+      </ul>
   </div>
 </div>
 
@@ -61,7 +62,14 @@
         <option value="ongoing">Ongoing</option>
         <option value="completed">Completed</option>
       </select>
-      <input type="number" name="priority" min="1" max="5" placeholder="Priority (1-5)">
+
+      <!-- Updated priority input -->
+      <select name="priority" id="priority-select">
+        <option value="1">High</option>
+        <option value="2">Medium</option>
+        <option value="3">Low</option>
+      </select>
+
       <select name="category_id">
         {% for category in user.categories %}
         <option value="{{ category.id }}">{{ category.name }}</option>
@@ -160,4 +168,85 @@
     })
     .catch(error => console.error('Error:', error));
   }
+
+  function deleteTask(noteId) {
+  if (!confirm("Are you sure you want to delete this task?")) return;
+
+  fetch(`/delete-note`, {
+    method: 'POST',
+    body: JSON.stringify({ noteId: noteId }),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(response => {
+    if (!response.ok) throw new Error('Network response was not ok');
+    return response.json();
+  })
+  .then(data => {
+    // Update the UI to reflect the task has been deleted
+    alert('Task deleted');
+    location.reload(); // Simple way to refresh the tasks
+  })
+  .catch(error => console.error('Error:', error));
+}
+
+function changePriority(taskId) {
+  var selectElement = document.getElementById('priority-select');
+  var priority = selectElement.value; // This will be '1', '2', or '3'
+
+  // Code to send this data to your server
+  fetch(`/update-priority/${taskId}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ priority: priority }),
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  })
+  .then(data => {
+    // Handle the response data
+    console.log('Priority updated:', data);
+  })
+  .catch(error => {
+    console.error('Error updating priority:', error);
+  });
+}
+
+function changeStatus(noteId, currentStatus) {
+  // Define the next status based on current status
+  const statuses = ['pending', 'ongoing', 'completed'];
+  let currentIndex = statuses.indexOf(currentStatus);
+  let nextIndex = (currentIndex + 1) % statuses.length;
+  let newStatus = statuses[nextIndex];
+
+  fetch(`/change-status/${noteId}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ status: newStatus }),
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  })
+  .then(data => {
+    // Handle the response data
+    console.log('Status updated:', data);
+    location.reload(); // Simple way to refresh the tasks
+  })
+  .catch(error => {
+    console.error('Error updating status:', error);
+  });
+}
+
+
   </script>{% endblock %}
