@@ -64,7 +64,7 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduc
 ## Authors
 
 - **Peter Ndirangu Nyambura**
-- **Mohamed yusuf**
+- **Mohhamed yusuf**
 - **Gideon Mugere**
 
 
@@ -73,12 +73,3 @@ See also the list of [contributors](CONTRIBUTORS.md) who participated in this pr
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
-
-## Acknowledgments
-
-- Hat tip to anyone whose code was used
-- Inspiration
-- etc
-```
-
-You can copy this content into a `README.md` file in your repository to provide comprehensive instructions on how to set up and run the application.
