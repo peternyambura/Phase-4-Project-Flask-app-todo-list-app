@@ -3,6 +3,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
+import os
 
 # Initialize the database and migrate extension but do not assign any app yet.
 db = SQLAlchemy()
@@ -10,10 +11,7 @@ migrate = Migrate()
 
 def create_app():
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://todolist_with_api_user:CxtzMktwZmZGssMuKD1xBw5xA8taU0Ew@dpg-cl5bhrq8vr0c73amvhc0-a.oregon-postgres.render.com/todolist_with_api'
-    app.config["DEBUG"] = True
-
-    # Initialize extensions with the app context
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')    # Initialize extensions with the app context
     db.init_app(app)
     migrate.init_app(app, db)
 
